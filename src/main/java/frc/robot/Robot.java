@@ -1,155 +1,72 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
-package frc.robot;
-
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-
-
-import frc.robot.subsystems.DriveBase;
-
-
+/**
+ * Phoenix Software License Agreement
+ *
+ * Copyright (C) Cross The Road Electronics.  All rights
+ * reserved.
+ * 
+ * Cross The Road Electronics (CTRE) licenses to you the right to 
+ * use, publish, and distribute copies of CRF (Cross The Road) firmware files (*.crf) and 
+ * Phoenix Software API Libraries ONLY when in use with CTR Electronics hardware products
+ * as well as the FRC roboRIO when in use in FRC Competition.
+ * 
+ * THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
+ * WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
+ * LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+ * CROSS THE ROAD ELECTRONICS BE LIABLE FOR ANY INCIDENTAL, SPECIAL, 
+ * INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF
+ * PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR SERVICES, ANY CLAIMS
+ * BY THIRD PARTIES (INCLUDING BUT NOT LIMITED TO ANY DEFENSE
+ * THEREOF), ANY CLAIMS FOR INDEMNITY OR CONTRIBUTION, OR OTHER
+ * SIMILAR COSTS, WHETHER ASSERTED ON THE BASIS OF CONTRACT, TORT
+ * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE
+ */
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
+ * Description:
+ * The ArcadeDrive_AuxFeedForward example demonstrates the ability to create an Arcade
+ * Drive based robot by using the Talon's and Victor's Feed Forward feature. 
+ * 
+ * The Auxiliary Feed Forward feature allows the user to apply more or less output on 
+ * the motor controllers current control mode's output, regardless of it being open or closed. 
+ * 
+ * Controls:
+ * Left Joystick Y-Axis: Drive robot forward and reverse
+ * Right Joystick X-Axis: Turn robot right and left
+ * 
+ * Supported Version:
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
+package frc.robot;
+
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.Subsystems.DriveBase;
+
 public class Robot extends TimedRobot {
- 
-  public static OI m_oi;
- public static DriveBase driveBase;
- 
-  Command m_autonomousCommand;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+	/** Hardware, either Talon could be a Victor */
 
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
-  @Override
-  public void robotInit() {
-    m_oi = new OI();
-    driveBase = new DriveBase();
-    
+	public static DriveBase driveBase = new DriveBase();
+	public static OI oi = new OI();
 
-  }
+	@Override
+	public void robotInit() {
+		/* Not used in this project */
+	}
+	
+	@Override
+	public void teleopInit(){
+		
+	}
+	
+	@Override
+	public void teleopPeriodic() {	
+		oi.update();	
+		Scheduler.getInstance().run();
+	}
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-  }
-
-  /**
-   * This function is called once each time the robot enters Disabled mode.
-   * You can use it to reset any subsystem information you want to clear when
-   * the robot is disabled.
-   */
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-    Scheduler.getInstance().run();
-  }
-
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString code to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional commands to the
-   * chooser code above (like the commented example) or additional comparisons
-   * to the switch structure below with additional strings & commands.
-   */
-  @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_chooser.getSelected();
-
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.start();
-    }
-  }
-
-  /**
-   * This function is called periodically during autonomous.
-   */
-  @Override
-  public void autonomousPeriodic() {
-    Scheduler.getInstance().run();
-  }
-
-  @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-  }
-
-  /**
-   * This function is called periodically during operator control.
-   */
-  @Override
-  public void teleopPeriodic() {
-    Scheduler.getInstance().run();
-    
-    
-  }
-
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
-  }
-  
-  public static void intTalon(TalonSRX motor){
-    motor.setNeutralMode(NeutralMode.Coast);
-    motor.neutralOutput();
-    motor.setSensorPhase(false);
-    motor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed,0);
-    motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed,0);
-    motor.configNominalOutputForward(0.0, 0);
-    motor.configNominalOutputReverse(0.0, 0);
-    motor.configClosedloopRamp(0.5,0);
-  }
 
 }
