@@ -5,37 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.wpilibj.command.*;
-import frc.robot.Robot;
+package frc.robot.Commands;
 
 /**
  * Add your docs here.
  */
-public class TankDrive extends Command {
+import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
+
+public class TankDrive extends Command{
 
     public TankDrive() {
         requires(Robot.driveBase);
     }
 
+    @Override
     protected void execute() {
-        double throttle = (1.0 - Robot.m_oi.LEFT_JOY.getThrottle()) / -2.0;
-
-        Robot.driveBase.set(ControlMode.PercentOutput, Robot.m_oi.getleftjoyy() * throttle,
-                Robot.m_oi.getrightjoyy() * throttle);
+        Robot.driveBase.tankSet(-Robot.oi.leftY, -Robot.oi.rightY);
     }
 
+    @Override
     protected boolean isFinished() {
 
         return false;
     }
 
-    protected void interupt() {
+    @Override
+    protected void interrupted() {
 
         end();
     }
 
 }
+
