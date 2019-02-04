@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,37 +7,48 @@
 
 package frc.robot;
 
-
-
+/**
+ * Add your docs here.
+ */
 import edu.wpi.first.wpilibj.Joystick;
 
-/**
- * This class is the glue that binds the controls on the physical operator
- * interface to the commands and command groups that allow control of the robot.
- */
 public class OI {
-    public static final double JOT_DEADZONE = 0.05;
-    public final Joystick LEFT_JOY= new Joystick(RobotMap.LEFT_JOYSTICK.value);
-    public final Joystick RIGHT_JOY= new Joystick(RobotMap.RIGHT_JOYSTICK.value);
-  
-  public OI(){
 
-  }
-   
-    public double getleftjoyx(){
-      double raw = LEFT_JOY.getX();
-      return Math.abs(raw) < JOT_DEADZONE ? 0.0 : raw ; 
+	Joystick _gamepad = new Joystick(1);
+	public double leftX;
+	public double rightX;
+	public double leftY;
+	public double rightY;
+	public double leftTrigger;
+	public double rightTrigger;
+
+    public OI() {
+
     }
-    public double getleftjoyy(){
-      double raw = LEFT_JOY.getY();
-      return Math.abs(raw) < JOT_DEADZONE ? 0.0 : raw ; 
+
+    public void update() {
+        /* Gamepad processing */
+		
+		leftY = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_LY.value));
+		leftX = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_LX.value));
+		leftTrigger = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_LT.value));
+		rightY = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_RY.value));
+		rightX = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_RX.value));
+		rightTrigger = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_RT.value));
     }
-    public double getrightjoyx(){
-      double raw = RIGHT_JOY.getX();
-      return Math.abs(raw) < JOT_DEADZONE ? 0.0 : raw ; 
-    }
-    public double getrightjoyy(){
-      double raw = RIGHT_JOY.getY();
-      return Math.abs(raw) < JOT_DEADZONE ? 0.0 : raw ; 
-    }
+
+    /** Deadband 5 percent, used on the gamepad */
+	private double deadband(double value) {
+		/* Upper deadband */
+		if (value >= +0.05) 
+			return value;
+		
+		/* Lower deadband */
+		if (value <= -0.05)
+			return value;
+		
+		/* Outside deadband */
+		return 0;
+	}
+
 }
