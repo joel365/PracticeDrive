@@ -1,0 +1,73 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
+package frc.robot;
+
+/**
+ * Add your docs here.
+ */
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.Intake;
+import frc.robot.commands.Motoroff;
+import frc.robot.commands.OutTake;
+import frc.robot.commands.ManipulaterStateClosed;
+
+public class OI {
+
+	Joystick _gamepad = new Joystick(1);
+	public double leftX;
+	public double rightX;
+	public double leftY;
+	public double rightY;
+	public double leftTrigger;
+	public double rightTrigger;
+	Button button1 = new JoystickButton(_gamepad, RobotMap.JOYSTICK_A.value);
+	Button button2 = new JoystickButton(_gamepad, RobotMap.JOYSTICK_B.value);
+	Button button3 = new JoystickButton(_gamepad, RobotMap.JOYSTICK_A.value);
+	Button button4 = new JoystickButton(_gamepad, RobotMap.JOYSTICK_B.value);
+    public OI() {
+		
+    }
+
+    public void update() {
+		/* Gamepad processing */
+		// intake
+		button1.whileHeld(new Intake());
+		button2.whileHeld(new OutTake());
+		button1.whenReleased(new Motoroff());
+		button2.whenReleased(new Motoroff());
+		// Pneumatics 
+		button3.whenPressed(new ManipulaterStateClosed(RobotMap.PISTON_CLOSED.value));
+		button4.whenPressed(new ManipulaterStateClosed(RobotMap.PISTON_CLOSED.value));
+
+		//axis and triggers
+		leftY = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_LY.value));
+		leftX = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_LX.value));
+		leftTrigger = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_LT.value));
+		rightY = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_RY.value));
+		rightX = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_RX.value));
+		rightTrigger = deadband(_gamepad.getRawAxis(RobotMap.JOYSTICK_RT.value));
+		
+    }
+
+    /** Deadband 5 percent, used on the gamepad */
+	private double deadband(double value) {
+		/* Upper deadband */
+		if (value >= +0.05) 
+			return value;
+		
+		/* Lower deadband */
+		if (value <= -0.05)
+			return value;
+		
+		/* Outside deadband */
+		return 0;
+	}
+
+}
